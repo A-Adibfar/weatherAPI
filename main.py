@@ -1,11 +1,26 @@
-import redis 
-import requests
-import json 
+import urllib.request
+import sys
+import os 
+import json
+import redis
 
 
-r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
-try:
-    data = response.json()
-except ValueError:
-    print("Response content is not valid JSON")
+API_KEY = os.getenv('WEATHER_API_KEY')    
+
+try: 
+  ResultBytes = urllib.request.urlopen(f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/san%20diego?unitGroup=metric&key={API_KEY}&contentType=json")
+  
+  # Parse the results as JSON
+  jsonData = json.load(ResultBytes)
+  
+except urllib.error.HTTPError  as e:
+  ErrorInfo= e.read().decode() 
+  print('Error code: ', e.code, ErrorInfo)
+  sys.exit()
+except  urllib.error.URLError as e:
+  ErrorInfo= e.read().decode() 
+  print('Error code: ', e.code,ErrorInfo)
+  sys.exit()
+
+
